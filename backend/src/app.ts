@@ -1,5 +1,5 @@
 import * as express from "express";
-
+// 타입스크립트
 const app = express.default();
 
 app.get(

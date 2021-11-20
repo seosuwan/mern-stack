@@ -55,7 +55,7 @@ const join = async (req: Request, res: Response, next: NextFunction) => {
 };
 const login = async (req: Request, res: Response, next: NextFunction) => {
     console.log("들어와따 ")
-    console.log(req.method)
+    console.log(req.body)
     // check("email", "Please include a valid email").isEmail();
     // check("password", "password is required").exists();
     // try{

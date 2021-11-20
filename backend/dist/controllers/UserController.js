@@ -54,32 +54,35 @@ const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    alert('들어옴');
-    (0, express_validator_1.check)("email", "Please include a valid email").isEmail();
-    (0, express_validator_1.check)("password", "password is required").exists();
-    try {
-        const errors = (0, express_validator_1.validationResult)(req);
-        if (!errors.isEmpty())
-            return (0, errorGenerator_1.default)({ statusCode: 400 });
-        const { email } = req.body;
-        const user = yield services_1.UserService.findEmail({ email });
-        if (!user) {
-            return (0, errorGenerator_1.default)({ statusCode: 401 });
-        }
-        const payload = {
-            user: {
-                email: user.email,
-            },
-        };
-        jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
-            if (err)
-                throw err;
-            res.json({ token });
-        });
-    }
-    catch (err) {
-        next(err);
-    }
+    console.log("들어와따 ");
+    console.log(req.body);
+    // check("email", "Please include a valid email").isEmail();
+    // check("password", "password is required").exists();
+    // try{
+    //     const errors = validationResult(req);
+    //     if(!errors.isEmpty())   return errorGenerator({ statusCode: 400 });
+    //     const { email } = req.body;
+    //     const user = await UserService.findEmail({ email });
+    //     if(!user){
+    //         return errorGenerator({ statusCode : 401});
+    //     }
+    //     const payload = {
+    //         user: {
+    //             email: user.email,
+    //         },
+    //     };
+    //     jwt.sign(
+    //         payload,
+    //         config.jwtSecret,
+    //         { expiresIn: 36000 },
+    //         (err, token) => {
+    //             if(err)     throw err;
+    //             res.json({ token }); 
+    //         }
+    //     );
+    // } catch(err) {
+    //     next(err);
+    // }
 });
 exports.default = {
     join,

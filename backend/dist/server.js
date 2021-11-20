@@ -11,7 +11,7 @@ class Server {
     }
 }
 const server = new Server().app;
-server.set('port', 3000);
+server.set('port', 3001);
 server.listen(server.get('port'), () => {
     console.log(`${server.get('port')} server is Running`);
 }).on('error', err => {

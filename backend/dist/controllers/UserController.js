@@ -54,6 +54,7 @@ const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    alert('들어옴');
     (0, express_validator_1.check)("email", "Please include a valid email").isEmail();
     (0, express_validator_1.check)("password", "password is required").exists();
     try {

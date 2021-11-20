@@ -24,7 +24,7 @@
   },
   "scripts": {
     "prestart": "tsc",
-    "start": "nodemon --exec ts-node dist/www.js"
+    "start": "nodemon --exec ts-node src/server.ts"
   },
   "keywords": [],
   "author": "",

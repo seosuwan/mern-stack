@@ -54,36 +54,38 @@ const join = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 const login = async (req: Request, res: Response, next: NextFunction) => {
-    check("email", "Please include a valid email").isEmail();
-    check("password", "password is required").exists();
-    try{
-        const errors = validationResult(req);
-        if(!errors.isEmpty())   return errorGenerator({ statusCode: 400 });
+    console.log("들어와따 ")
+    console.log(req.method)
+    // check("email", "Please include a valid email").isEmail();
+    // check("password", "password is required").exists();
+    // try{
+    //     const errors = validationResult(req);
+    //     if(!errors.isEmpty())   return errorGenerator({ statusCode: 400 });
         
-        const { email } = req.body;
-        const user = await UserService.findEmail({ email });
-        if(!user){
-            return errorGenerator({ statusCode : 401});
-        }
+    //     const { email } = req.body;
+    //     const user = await UserService.findEmail({ email });
+    //     if(!user){
+    //         return errorGenerator({ statusCode : 401});
+    //     }
 
         
-        const payload = {
-            user: {
-                email: user.email,
-            },
-        };
-        jwt.sign(
-            payload,
-            config.jwtSecret,
-            { expiresIn: 36000 },
-            (err, token) => {
-                if(err)     throw err;
-                res.json({ token }); 
-            }
-        );
-    } catch(err) {
-        next(err);
-    }
+    //     const payload = {
+    //         user: {
+    //             email: user.email,
+    //         },
+    //     };
+    //     jwt.sign(
+    //         payload,
+    //         config.jwtSecret,
+    //         { expiresIn: 36000 },
+    //         (err, token) => {
+    //             if(err)     throw err;
+    //             res.json({ token }); 
+    //         }
+    //     );
+    // } catch(err) {
+    //     next(err);
+    // }
     
 }
 export default {

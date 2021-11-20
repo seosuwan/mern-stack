@@ -3,7 +3,7 @@ import { UserController } from "../../controllers";
 
 const router = Router();
 
-router.use('/join', UserController.join);
-router.use('/login',UserController.login);
+router.use('/users/join', UserController.join);
+router.use('/users/login',UserController.login);
 
 export default router;

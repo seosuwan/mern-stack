@@ -23,8 +23,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // })
 // import router from "./api/route";
 const UserRouter_1 = __importDefault(require("./api/route/UserRouter"));
-// import connectDB from "./Loaders/db";
-// connectDB();
+const db_1 = __importDefault(require("./Loaders/db"));
+(0, db_1.default)();
 const express = require("express");
 const cors = require("cors");
 const app = express();

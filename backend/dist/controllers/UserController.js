@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.token = void 0;
 // import bcrypt from "bcryptjs";
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
@@ -21,6 +22,7 @@ const services_1 = require("../services");
 // const router = express.Router();
 // import auth from "../api/middleware/auth";
 // import User from "../models/User";
+exports.token = require("jsonwebtoken");
 const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("들어왔니?");
     (0, express_validator_1.check)("username", "Name is required").not().isEmpty();
@@ -30,16 +32,13 @@ const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     (0, express_validator_1.check)("password", "Please enter a password with 8 or more characters").isLength({ min: 8 });
     const { username, email, password, birth, phone, address } = req.body;
     try {
-        console.log("비어서와씀?/");
         const errors = (0, express_validator_1.validationResult)(req.body);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return console.log("비어서와씀?/"), res.status(400).json({ errors: errors.array() });
         }
-        console.log("있는 메일");
         const foundUser = yield services_1.UserService.findEmail({ email });
         if (foundUser)
             (0, errorGenerator_1.default)({ statusCode: 409 }); // 이미 가입한 유저
-        console.log("저장됌");
         const createdUser = yield services_1.UserService.createUser({ username, email, password, phone, address, birth });
         res.status(201).json({ message: 'created', createdUserEmail: createdUser.email });
         const payload = {
@@ -47,8 +46,7 @@ const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
                 email: createdUser.email,
             },
         };
-        console.log("일로드러옴?");
-        jsonwebtoken_1.default.join(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
+        jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
             if (err)
                 throw err;
             res.json({ token });
@@ -64,14 +62,13 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     (0, express_validator_1.check)("email", "Please include a valid email").isEmail();
     (0, express_validator_1.check)("password", "password is required").exists();
     try {
-        console.log("에러로 들어옴 ");
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty())
-            return (0, errorGenerator_1.default)({ statusCode: 400 });
+            return console.log("에러남"), (0, errorGenerator_1.default)({ statusCode: 400 });
         const { email } = req.body;
         const user = yield services_1.UserService.findEmail({ email });
         if (!user) {
-            return (0, errorGenerator_1.default)({ statusCode: 401 });
+            return console.log("에러남2"), (0, errorGenerator_1.default)({ statusCode: 401 });
         }
         const payload = {
             user: {

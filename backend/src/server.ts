@@ -22,15 +22,16 @@
 // })
 // import router from "./api/route";
 import UserRouter from "./api/route/UserRouter";
-// import connectDB from "./Loaders/db";
+import connectDB from "./Loaders/db";
 
-// connectDB();
+connectDB();
+
+// require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
 
 app.use(cors()); // CORS 미들웨어 등록
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 

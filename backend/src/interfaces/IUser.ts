@@ -18,4 +18,5 @@ export interface IUserInPutDTO{ //post할때 받는거 !!
 
 export interface userUniqueSearchInput {
     email : string;
+    password : string;
 }

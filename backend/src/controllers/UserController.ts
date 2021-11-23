@@ -6,8 +6,7 @@ import errorGenerator from "../errors/errorGenerator";
 import { check, validationResult } from "express-validator";
 import { IUserInPutDTO } from "../interfaces/IUser";
 import { UserService } from "../services";
-import { nextTick } from "process";
-import { mongo, Mongoose } from "mongoose";
+
 
 // const router = express.Router();
 
@@ -30,7 +29,7 @@ const join = async (req: Request, res: Response, next: NextFunction) => {
             return console.log("비어서와씀?/"), res.status(400).json({ errors: errors.array() });
         }
         
-        const foundUser = await UserService.findEmail({ email });
+        const foundUser = await UserService.findEmail({ email,password });
         if(foundUser)errorGenerator({ statusCode: 409 });  // 이미 가입한 유저
 
         const createdUser = await UserService.createUser({ username, email, password, phone, address, birth });
@@ -65,8 +64,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if(!errors.isEmpty())return console.log("에러남"), errorGenerator({ statusCode: 400 });
         
-        const { email } = req.body;
-        const user = await UserService.findEmail({ email });
+        const { email, password } = req.body;
+        const user = await UserService.findEmail({ email,password });
         if(!user){
             return console.log("에러남2"), errorGenerator({ statusCode : 401});
         }

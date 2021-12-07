@@ -25,6 +25,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const UserRouter_1 = __importDefault(require("./api/route/UserRouter"));
 const db_1 = __importDefault(require("./Loaders/db"));
 (0, db_1.default)();
+// require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();

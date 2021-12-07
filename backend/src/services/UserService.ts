@@ -1,4 +1,4 @@
-import { IUserInPutDTO, userUniqueSearchInput } from "../interfaces/IUser";
+import { IUserInPutDTO,  userUniqueSearchInput, userExist } from "../interfaces/IUser";
 import User from "../models/User";
 
 const createUser = (data: IUserInPutDTO) => {
@@ -6,13 +6,18 @@ const createUser = (data: IUserInPutDTO) => {
     return user.save();
 }
 
-const findEmail = (data: userUniqueSearchInput) => {
+const findLogin = (data: userUniqueSearchInput) => {
     const { email,password  } = data;
+    return User.findOne({ email, password });
+}
+const findEmail = (data: userExist) => {
+    const { email } = data;
     // console.log(`여기는 파인드 이메일}`)
     // console.log(User.findOne({email}))
-    return User.findOne({ email, password });
+    return User.findOne({ email });
 }
 export default {
     createUser,
-    findEmail
+    findLogin,
+    findEmail,
 };

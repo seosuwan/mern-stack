@@ -12,17 +12,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.token = void 0;
-// import bcrypt from "bcryptjs";
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const config_1 = __importDefault(require("../config"));
 const errorGenerator_1 = __importDefault(require("../errors/errorGenerator"));
 const express_validator_1 = require("express-validator");
 const services_1 = require("../services");
 // const router = express.Router();
 // import auth from "../api/middleware/auth";
 // import User from "../models/User";
-exports.token = require("jsonwebtoken");
+// export const token = require("jsonwebtoken")
+const exist = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    // const { email }: IUserInPutDTO = req.body;
+    console.log(req.url.substr(1));
+    // console.log('email: ' + email)
+    // console.log("중복체크와썹?")
+    console.log((0, express_validator_1.check)("email").isEmpty());
+    try {
+        console.log(req);
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty())
+            return console.log("에러남"), (0, errorGenerator_1.default)({ statusCode: 400 });
+        const email = req.url.substring(1);
+        console.log(`************${email}`);
+        const foundEmail = yield services_1.UserService.findEmail({ email });
+        console.log(foundEmail);
+        if (foundEmail) {
+            return console.log("이메일 찾았음"), (0, errorGenerator_1.default)({ statusCode: 401 });
+        }
+        console.log(foundEmail);
+        return res.status(201).json(foundEmail);
+    }
+    catch (err) {
+        next(err);
+    }
+});
 const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("들어왔니?");
     (0, express_validator_1.check)("username", "Name is required").not().isEmpty();
@@ -36,21 +57,25 @@ const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
         if (!errors.isEmpty()) {
             return console.log("비어서와씀?/"), res.status(400).json({ errors: errors.array() });
         }
-        const foundUser = yield services_1.UserService.findEmail({ email });
+        const foundUser = yield services_1.UserService.findLogin({ email, password });
         if (foundUser)
-            (0, errorGenerator_1.default)({ statusCode: 409 }); // 이미 가입한 유저
+            (0, errorGenerator_1.default)({ statusCode: 409 }); // 이미 가입한 유저 //
         const createdUser = yield services_1.UserService.createUser({ username, email, password, phone, address, birth });
         res.status(201).json({ message: 'created', createdUserEmail: createdUser.email });
-        const payload = {
-            user: {
-                email: createdUser.email,
-            },
-        };
-        jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
-            if (err)
-                throw err;
-            res.json({ token });
-        });
+        // const payload = {
+        //     user: {
+        //         email: createdUser.email,
+        //     },
+        // };
+        //     jwt.sign(
+        //         payload,
+        //         config.jwtSecret,
+        //         { expiresIn: 36000 },
+        //         (err, token) => {
+        //             if(err) throw err;
+        //             res.json({ token });
+        //         }
+        //     );
     }
     catch (err) {
         next(err);
@@ -65,21 +90,27 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty())
             return console.log("에러남"), (0, errorGenerator_1.default)({ statusCode: 400 });
-        const { email } = req.body;
-        const user = yield services_1.UserService.findEmail({ email });
+        const { email, password } = req.body;
+        const user = yield services_1.UserService.findLogin({ email, password });
         if (!user) {
             return console.log("에러남2"), (0, errorGenerator_1.default)({ statusCode: 401 });
         }
-        const payload = {
-            user: {
-                email: user.email,
-            },
-        };
-        jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
-            if (err)
-                throw err;
-            res.json({ token });
-        });
+        console.log(user);
+        return res.status(201).json({ user });
+        // const payload = {
+        //     user: {
+        //         email: user.email,
+        //     },
+        // };
+        // jwt.sign(
+        //     payload,
+        //     config.jwtSecret,
+        //     { expiresIn: 36000 },
+        //     (err, token) => {
+        //         if(err)     throw err;
+        //         res.json({ token }); 
+        //     }
+        // );
     }
     catch (err) {
         next(err);
@@ -87,5 +118,6 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.default = {
     join,
-    login
+    login,
+    exist
 };

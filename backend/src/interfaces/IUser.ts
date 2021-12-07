@@ -20,3 +20,7 @@ export interface userUniqueSearchInput {
     email : string;
     password : string;
 }
+export interface userExist{
+    email : string;
+}
+

@@ -12,6 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// import bcrypt from "bcryptjs";
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_1 = __importDefault(require("../config"));
 const errorGenerator_1 = __importDefault(require("../errors/errorGenerator"));
 const express_validator_1 = require("express-validator");
 const services_1 = require("../services");
@@ -62,20 +65,16 @@ const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
             (0, errorGenerator_1.default)({ statusCode: 409 }); // 이미 가입한 유저 //
         const createdUser = yield services_1.UserService.createUser({ username, email, password, phone, address, birth });
         res.status(201).json({ message: 'created', createdUserEmail: createdUser.email });
-        // const payload = {
-        //     user: {
-        //         email: createdUser.email,
-        //     },
-        // };
-        //     jwt.sign(
-        //         payload,
-        //         config.jwtSecret,
-        //         { expiresIn: 36000 },
-        //         (err, token) => {
-        //             if(err) throw err;
-        //             res.json({ token });
-        //         }
-        //     );
+        const payload = {
+            user: {
+                email: createdUser.email,
+            },
+        };
+        jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
+            if (err)
+                throw err;
+            res.json({ token });
+        });
     }
     catch (err) {
         next(err);

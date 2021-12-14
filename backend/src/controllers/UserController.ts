@@ -13,20 +13,20 @@ import User from "../models/User";
 
 // import auth from "../api/middleware/auth";
 // import User from "../models/User";
-// export const token = require("jsonwebtoken")
+export const token = require("jsonwebtoken")
 const exist = async (req: Request, res: Response, next: NextFunction) => {
     // const { email }: IUserInPutDTO = req.body;
-    console.log(req.url.substr(1))
+    // console.log(req.url.substr(1))
     // console.log('email: ' + email)
     // console.log("중복체크와썹?")
-    console.log(check("email").isEmpty());
+    // console.log(check("email").isEmpty());
     try {
-        console.log(req)
+        // console.log(req)
         const errors = validationResult(req);
         if (!errors.isEmpty()) return console.log("에러남"), errorGenerator({ statusCode: 400 });
 
         const email = req.url.substring(1);
-        console.log(`************${email}`)
+        // console.log(`************${email}`)
         const foundEmail = await UserService.findEmail({email});
         console.log(foundEmail)
         if (foundEmail) {
@@ -40,7 +40,7 @@ const exist = async (req: Request, res: Response, next: NextFunction) => {
 
 }
 const join = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("들어왔니?")
+    console.log("**********여기 회원가입")
     check("username", "Name is required").not().isEmpty();
     check("phone", "phone is required").not().isEmpty();
     check("birth", "birth is required").not().isEmpty();
@@ -60,29 +60,31 @@ const join = async (req: Request, res: Response, next: NextFunction) => {
         const createdUser = await UserService.createUser({ username, email, password, phone, address, birth });
         res.status(201).json({ message: 'created', createdUserEmail: createdUser.email })
 
-        // const payload = {
-        //     user: {
-        //         email: createdUser.email,
-        //     },
-        // };
+        const payload = {
+            user: {
+                email: createdUser.email,
+            },
+        };
+        console.log("jwt 하러가욤")
 
-        //     jwt.sign(
-        //         payload,
-        //         config.jwtSecret,
-        //         { expiresIn: 36000 },
-        //         (err, token) => {
-        //             if(err) throw err;
-        //             res.json({ token });
-        //         }
-        //     );
-    } catch (err) {
-        next(err);
-    }
+        jwt.sign(
+            payload,
+            config.jwtSecret,
+            { expiresIn: '14d'},
+            (err, token) => {
+                if(err) throw err;
+                res.json({ token });
+            }
+        );
+} catch (err) {
+    next(err);
+}
+console.log( res.json({ token }))
 };
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("들어와따 ")
-    console.log(req.body)
+    console.log("로그인 들어와따 ")
+    // console.log(req.body)
     check("email", "Please include a valid email").isEmail();
     check("password", "password is required").exists();
     try {
@@ -97,26 +99,25 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         console.log(user)
         return res.status(201).json({ user })
 
-
-        // const payload = {
-        //     user: {
-        //         email: user.email,
-        //     },
-        // };
-
-        // jwt.sign(
-        //     payload,
-        //     config.jwtSecret,
-        //     { expiresIn: 36000 },
-        //     (err, token) => {
-        //         if(err)     throw err;
-        //         res.json({ token }); 
-        //     }
-        // );
-    } catch (err) {
+        const payload = {
+            user: {
+                email: user.email,
+            },
+        };
+        console.log("jwt 하러가욤")
+        jwt.sign(
+            payload,
+            config.jwtSecret,
+            { expiresIn: 36000 },
+            (err, token) => {
+                if(err)     throw err;
+                res.json({ token }); 
+            }
+        );
+    } catch(err) {
         next(err);
     }
-
+    console.log( res.json({ token }))
 }
 export default {
     join,

@@ -31,6 +31,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+
 app.use(cors()); // CORS 미들웨어 등록
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

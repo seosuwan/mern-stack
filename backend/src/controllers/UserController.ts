@@ -13,7 +13,8 @@ import User from "../models/User";
 
 // import auth from "../api/middleware/auth";
 // import User from "../models/User";
-export const token = require("jsonwebtoken")
+import token from "jsonwebtoken";
+
 const exist = async (req: Request, res: Response, next: NextFunction) => {
     // const { email }: IUserInPutDTO = req.body;
     // console.log(req.url.substr(1))
@@ -39,6 +40,7 @@ const exist = async (req: Request, res: Response, next: NextFunction) => {
     }
 
 }
+// const token = 'MySecretKey1$1$234';
 const join = async (req: Request, res: Response, next: NextFunction) => {
     console.log("**********여기 회원가입")
     check("username", "Name is required").not().isEmpty();
@@ -66,8 +68,9 @@ const join = async (req: Request, res: Response, next: NextFunction) => {
             },
         };
         console.log("jwt 하러가욤")
-
-        jwt.sign(
+        // 
+        
+        return jwt.sign(
             payload,
             config.jwtSecret,
             { expiresIn: '14d'},
@@ -79,7 +82,7 @@ const join = async (req: Request, res: Response, next: NextFunction) => {
 } catch (err) {
     next(err);
 }
-console.log( res.json({ token }))
+console.log(JSON.stringify(token.verify))
 };
 
 const login = async (req: Request, res: Response, next: NextFunction) => {

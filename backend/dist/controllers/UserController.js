@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.token = void 0;
 // import bcrypt from "bcryptjs";
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
@@ -21,20 +22,20 @@ const services_1 = require("../services");
 // const router = express.Router();
 // import auth from "../api/middleware/auth";
 // import User from "../models/User";
-// export const token = require("jsonwebtoken")
+exports.token = require("jsonwebtoken");
 const exist = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     // const { email }: IUserInPutDTO = req.body;
-    console.log(req.url.substr(1));
+    // console.log(req.url.substr(1))
     // console.log('email: ' + email)
     // console.log("중복체크와썹?")
-    console.log((0, express_validator_1.check)("email").isEmpty());
+    // console.log(check("email").isEmpty());
     try {
-        console.log(req);
+        // console.log(req)
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty())
             return console.log("에러남"), (0, errorGenerator_1.default)({ statusCode: 400 });
         const email = req.url.substring(1);
-        console.log(`************${email}`);
+        // console.log(`************${email}`)
         const foundEmail = yield services_1.UserService.findEmail({ email });
         console.log(foundEmail);
         if (foundEmail) {
@@ -48,7 +49,7 @@ const exist = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("들어왔니?");
+    console.log("**********여기 회원가입");
     (0, express_validator_1.check)("username", "Name is required").not().isEmpty();
     (0, express_validator_1.check)("phone", "phone is required").not().isEmpty();
     (0, express_validator_1.check)("birth", "birth is required").not().isEmpty();
@@ -70,7 +71,8 @@ const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
                 email: createdUser.email,
             },
         };
-        jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
+        console.log("jwt 하러가욤");
+        jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: '14d' }, (err, token) => {
             if (err)
                 throw err;
             res.json({ token });
@@ -79,10 +81,11 @@ const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     catch (err) {
         next(err);
     }
+    console.log(res.json({ token: exports.token }));
 });
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("들어와따 ");
-    console.log(req.body);
+    console.log("로그인 들어와따 ");
+    // console.log(req.body)
     (0, express_validator_1.check)("email", "Please include a valid email").isEmail();
     (0, express_validator_1.check)("password", "password is required").exists();
     try {
@@ -96,24 +99,22 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         }
         console.log(user);
         return res.status(201).json({ user });
-        // const payload = {
-        //     user: {
-        //         email: user.email,
-        //     },
-        // };
-        // jwt.sign(
-        //     payload,
-        //     config.jwtSecret,
-        //     { expiresIn: 36000 },
-        //     (err, token) => {
-        //         if(err)     throw err;
-        //         res.json({ token }); 
-        //     }
-        // );
+        const payload = {
+            user: {
+                email: user.email,
+            },
+        };
+        console.log("jwt 하러가욤");
+        jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
+            if (err)
+                throw err;
+            res.json({ token });
+        });
     }
     catch (err) {
         next(err);
     }
+    console.log(res.json({ token: exports.token }));
 });
 exports.default = {
     join,

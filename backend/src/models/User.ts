@@ -22,6 +22,15 @@ const UserSchema = new mongoose.Schema({
     birth: {
         type: String
     },
+    user_interests:{
+        type: String
+    },
+    job: {
+        type: String
+    },
+    token:{
+        type: String
+    }
     
 });
 export default mongoose.model<IUser & mongoose.Document>("User", UserSchema);

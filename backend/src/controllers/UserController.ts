@@ -13,7 +13,7 @@ import User from "../models/User";
 
 // import auth from "../api/middleware/auth";
 // import User from "../models/User";
-import token from "jsonwebtoken";
+// import token from "jsonwebtoken";
 
 const exist = async (req: Request, res: Response, next: NextFunction) => {
     // const { email }: IUserInPutDTO = req.body;
@@ -28,7 +28,7 @@ const exist = async (req: Request, res: Response, next: NextFunction) => {
 
         const email = req.url.substring(1);
         // console.log(`************${email}`)
-        const foundEmail = await UserService.findEmail({email});
+        const foundEmail = await UserService.findEmail({ email });
         console.log(foundEmail)
         if (foundEmail) {
             return console.log("이메일 찾았음"), errorGenerator({ statusCode: 401 });
@@ -48,7 +48,7 @@ const join = async (req: Request, res: Response, next: NextFunction) => {
     check("birth", "birth is required").not().isEmpty();
     check("email", "Please include a valid email").isEmail();
     check("password", "Please enter a password with 8 or more characters").isLength({ min: 8 });
-    const { username, email, password, birth, phone, address }: IUserInPutDTO = req.body;
+    const { username, email, password, birth, phone, address, user_interests, job }: IUserInPutDTO = req.body;
     try {
 
         const errors = validationResult(req.body);
@@ -59,30 +59,31 @@ const join = async (req: Request, res: Response, next: NextFunction) => {
         const foundUser = await UserService.findLogin({ email, password });
         if (foundUser) errorGenerator({ statusCode: 409 });  // 이미 가입한 유저 //
 
-        const createdUser = await UserService.createUser({ username, email, password, phone, address, birth });
+        const createdUser = await UserService.createUser({
+            username, email, password, phone, address, birth, user_interests,
+            job
+        });
         res.status(201).json({ message: 'created', createdUserEmail: createdUser.email })
 
-        const payload = {
-            user: {
-                email: createdUser.email,
-            },
-        };
-        console.log("jwt 하러가욤")
-        // 
-        
-        return jwt.sign(
-            payload,
-            config.jwtSecret,
-            { expiresIn: '14d'},
-            (err, token) => {
-                if(err) throw err;
-                res.json({ token });
-            }
-        );
-} catch (err) {
-    next(err);
-}
-console.log(JSON.stringify(token.verify))
+        // const payload = {
+        //     user: {
+        //         email: createdUser.email,
+        //     },
+        // };
+        // console.log("jwt============================")
+        // const token = jwt.sign(
+        //     payload,
+        //     config.jwtSecret,
+        //     { expiresIn: "7d" },
+        //     (err, token) => {
+        //         if(err) throw err;
+        //         res.json({ token });
+        //     }
+        // );
+        // console.log(`=================${JSON.stringify(jwt.JsonWebTokenError)}`)
+    } catch (err) {
+        next(err);
+    }
 };
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -92,39 +93,46 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     check("password", "password is required").exists();
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) return console.log("에러남"), errorGenerator({ statusCode: 400 });
+        if (!errors.isEmpty()) return errorGenerator({ statusCode: 400 });
 
         const { email, password } = req.body;
         const user = await UserService.findLogin({ email, password });
-        if (!user) {
-            return console.log("에러남2"), errorGenerator({ statusCode: 401 });
-        }
+        console.log(`user type: ${typeof user}`)
         console.log(user)
-        return res.status(201).json({ user })
-
-        const payload = {
-            user: {
-                email: user.email,
-            },
-        };
-        console.log("jwt 하러가욤")
-        jwt.sign(
-            payload,
-            config.jwtSecret,
-            { expiresIn: 36000 },
-            (err, token) => {
-                if(err)     throw err;
-                res.json({ token }); 
-            }
-        );
-    } catch(err) {
+        if (!user) {
+            return errorGenerator({ statusCode: 401 });
+        }
+        
+        else {
+            console.log(`=========email========${user.email}`)
+            
+            const payload = {
+                user: {
+                    email: user.email,
+                },
+            };
+            jwt.sign(
+                payload,
+                config.jwtSecret,
+                { expiresIn: 36000 },
+                (err, token) => {
+                    if (err) {throw err};
+                    console.log(`==========token=======${JSON.stringify(token)}`)
+                    res.json({ token });
+                    
+                    console.log(`==========직전 user=======${JSON.stringify(user)}`)
+                    return res.status(201).json( {user} )
+                }
+                );
+                console.log(`========jwtSecret=========${JSON.stringify(config.jwtSecret)}`)
+            console.log(`=======verify==========${JSON.stringify(jwt.verify)}`)
+        }
+    } catch (err) {
         next(err);
     }
-    console.log( res.json({ token }))
 }
 export default {
     join,
     login,
     exist
 }
-

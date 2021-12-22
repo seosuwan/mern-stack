@@ -25,5 +25,11 @@ const UserSchema = new mongoose_1.default.Schema({
     birth: {
         type: String
     },
+    user_interests: {
+        type: String
+    },
+    job: {
+        type: String
+    }
 });
 exports.default = mongoose_1.default.model("User", UserSchema);

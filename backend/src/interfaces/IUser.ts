@@ -5,6 +5,8 @@ export interface IUser{
     phone: string;
     address: string;
     birth: string;
+    user_interests: string,
+    job: string
 }
 
 export interface IUserInPutDTO{ //post할때 받는거 !!
@@ -14,6 +16,8 @@ export interface IUserInPutDTO{ //post할때 받는거 !!
     phone: string;
     address: string;
     birth: string;
+    user_interests: string,
+    job: string
 }
 
 export interface userUniqueSearchInput {

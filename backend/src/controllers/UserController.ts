@@ -14,7 +14,26 @@ import User from "../models/User";
 // import auth from "../api/middleware/auth";
 // import User from "../models/User";
 // import token from "jsonwebtoken";
+const modify = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        console.log("서버 들어옴~~")
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return console.log("에러남"), errorGenerator({ statusCode: 400 });
 
+        // console.log(`************${email}`)
+        const { email, username, password, address, birth, job, phone, user_interests } = req.body;
+
+        const modifyUser = await UserService.modifyUser({ email, username, password, address, birth, job, phone, user_interests});
+        if (!modifyUser) {
+
+            return console.log("회원 수정 실패"), errorGenerator({ statusCode: 401 });
+        }
+        console.log(modifyUser)
+        return res.status(201).json(modifyUser)
+    } catch (err) {
+        next(err);
+    }
+}
 const exist = async (req: Request, res: Response, next: NextFunction) => {
     // const { email }: IUserInPutDTO = req.body;
     // console.log(req.url.substr(1))
@@ -102,31 +121,32 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         if (!user) {
             return errorGenerator({ statusCode: 401 });
         }
+        return res.status(201).json( {user} )
+
         
-        else {
-            console.log(`=========email========${user.email}`)
+        // else {
+        //     console.log(`=========email========${user.email}`)
             
-            const payload = {
-                user: {
-                    email: user.email,
-                },
-            };
-            jwt.sign(
-                payload,
-                config.jwtSecret,
-                { expiresIn: 36000 },
-                (err, token) => {
-                    if (err) {throw err};
-                    console.log(`==========token=======${JSON.stringify(token)}`)
-                    res.json({ token });
+        //     const payload = {
+        //         user: {
+        //             email: user.email,
+        //         },
+        //     };
+        //     jwt.sign(
+        //         payload,
+        //         config.jwtSecret,
+        //         { expiresIn: 36000 },
+        //         (err, token) => {
+        //             if (err) {throw err};
+        //             console.log(`==========token=======${JSON.stringify(token)}`)
+        //             res.json({ token });
                     
-                    console.log(`==========직전 user=======${JSON.stringify(user)}`)
-                    return res.status(201).json( {user} )
-                }
-                );
-                console.log(`========jwtSecret=========${JSON.stringify(config.jwtSecret)}`)
-            console.log(`=======verify==========${JSON.stringify(jwt.verify)}`)
-        }
+        //             console.log(`==========직전 user=======${JSON.stringify(user)}`)
+        //         }
+        //         );
+        //         console.log(`========jwtSecret=========${JSON.stringify(config.jwtSecret)}`)
+        //     console.log(`=======verify==========${JSON.stringify(jwt.verify)}`)
+        // }
     } catch (err) {
         next(err);
     }
@@ -134,5 +154,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 export default {
     join,
     login,
-    exist
+    exist,
+    modify
 }

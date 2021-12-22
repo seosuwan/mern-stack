@@ -5,7 +5,10 @@ const createUser = (data: IUserInPutDTO) => {
     const user = new User(data);
     return user.save();
 }
-
+const modifyUser = (data: IUserInPutDTO ) => {
+    const { email, username, password, address, birth, job, phone, user_interests } = data
+    return User.findByIdAndUpdate(email, {username, password, address, birth, job, phone, user_interests})
+}
 const findLogin = (data: userUniqueSearchInput) => {
     const { email,password  } = data;
     return User.findOne({ email, password });
@@ -20,4 +23,5 @@ export default {
     createUser,
     findLogin,
     findEmail,
+    modifyUser
 };

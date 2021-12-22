@@ -24,11 +24,13 @@ const modify = async(req: Request, res: Response, next: NextFunction) => {
         const { email, username, password, address, birth, job, phone, user_interests } = req.body;
 
         const modifyUser = await UserService.modifyUser({ email, username, password, address, birth, job, phone, user_interests});
+        
+        console.log(`======들어온 데이타====${JSON.stringify(modifyUser)}`)
         if (!modifyUser) {
 
             return console.log("회원 수정 실패"), errorGenerator({ statusCode: 401 });
         }
-        console.log(modifyUser)
+        console.log(`=======석세스 데이타ㅏㅏㅏ${modifyUser}`)
         return res.status(201).json(modifyUser)
     } catch (err) {
         next(err);

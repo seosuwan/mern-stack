@@ -7,7 +7,7 @@ const createUser = (data: IUserInPutDTO) => {
 }
 const modifyUser = (data: IUserInPutDTO ) => {
     const { email, username, password, address, birth, job, phone, user_interests } = data
-    return User.findByIdAndUpdate(email, {username, password, address, birth, job, phone, user_interests})
+    return User.findOneAndUpdate({email,username, password, address, birth, job, phone, user_interests})
 }
 const findLogin = (data: userUniqueSearchInput) => {
     const { email,password  } = data;

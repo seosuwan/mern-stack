@@ -30,6 +30,9 @@ const UserSchema = new mongoose_1.default.Schema({
     },
     job: {
         type: String
+    },
+    token: {
+        type: String
     }
 });
 exports.default = mongoose_1.default.model("User", UserSchema);

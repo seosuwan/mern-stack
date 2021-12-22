@@ -12,16 +12,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// import bcrypt from "bcryptjs";
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const config_1 = __importDefault(require("../config"));
 const errorGenerator_1 = __importDefault(require("../errors/errorGenerator"));
 const express_validator_1 = require("express-validator");
 const services_1 = require("../services");
 // const router = express.Router();
 // import auth from "../api/middleware/auth";
 // import User from "../models/User";
-const jsonwebtoken_2 = __importDefault(require("jsonwebtoken"));
+// import token from "jsonwebtoken";
+const modify = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log("서버 들어옴~~");
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty())
+            return console.log("에러남"), (0, errorGenerator_1.default)({ statusCode: 400 });
+        // console.log(`************${email}`)
+        const { email, username, password, address, birth, job, phone, user_interests } = req.body;
+        const modifyUser = yield services_1.UserService.modifyUser({ email, username, password, address, birth, job, phone, user_interests });
+        if (!modifyUser) {
+            return console.log("회원 수정 실패"), (0, errorGenerator_1.default)({ statusCode: 401 });
+        }
+        console.log(modifyUser);
+        return res.status(201).json(modifyUser);
+    }
+    catch (err) {
+        next(err);
+    }
+});
 const exist = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     // const { email }: IUserInPutDTO = req.body;
     // console.log(req.url.substr(1))
@@ -64,26 +80,31 @@ const join = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
         const foundUser = yield services_1.UserService.findLogin({ email, password });
         if (foundUser)
             (0, errorGenerator_1.default)({ statusCode: 409 }); // 이미 가입한 유저 //
-        const createdUser = yield services_1.UserService.createUser({ username, email, password, phone, address, birth, user_interests,
-            job });
-        res.status(201).json({ message: 'created', createdUserEmail: createdUser.email });
-        const payload = {
-            user: {
-                email: createdUser.email,
-            },
-        };
-        console.log("jwt 하러가욤");
-        // 
-        return jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: '14d' }, (err, token) => {
-            if (err)
-                throw err;
-            res.json({ token });
+        const createdUser = yield services_1.UserService.createUser({
+            username, email, password, phone, address, birth, user_interests,
+            job
         });
+        res.status(201).json({ message: 'created', createdUserEmail: createdUser.email });
+        // const payload = {
+        //     user: {
+        //         email: createdUser.email,
+        //     },
+        // };
+        // console.log("jwt============================")
+        // const token = jwt.sign(
+        //     payload,
+        //     config.jwtSecret,
+        //     { expiresIn: "7d" },
+        //     (err, token) => {
+        //         if(err) throw err;
+        //         res.json({ token });
+        //     }
+        // );
+        // console.log(`=================${JSON.stringify(jwt.JsonWebTokenError)}`)
     }
     catch (err) {
         next(err);
     }
-    console.log(JSON.stringify(jsonwebtoken_2.default.verify));
 });
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("로그인 들어와따 ");
@@ -93,33 +114,44 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty())
-            return console.log("에러남"), (0, errorGenerator_1.default)({ statusCode: 400 });
+            return (0, errorGenerator_1.default)({ statusCode: 400 });
         const { email, password } = req.body;
         const user = yield services_1.UserService.findLogin({ email, password });
-        if (!user) {
-            return console.log("에러남2"), (0, errorGenerator_1.default)({ statusCode: 401 });
-        }
+        console.log(`user type: ${typeof user}`);
         console.log(user);
+        if (!user) {
+            return (0, errorGenerator_1.default)({ statusCode: 401 });
+        }
         return res.status(201).json({ user });
-        const payload = {
-            user: {
-                email: user.email,
-            },
-        };
-        console.log("jwt 하러가욤");
-        jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
-            if (err)
-                throw err;
-            res.json({ token });
-        });
+        // else {
+        //     console.log(`=========email========${user.email}`)
+        //     const payload = {
+        //         user: {
+        //             email: user.email,
+        //         },
+        //     };
+        //     jwt.sign(
+        //         payload,
+        //         config.jwtSecret,
+        //         { expiresIn: 36000 },
+        //         (err, token) => {
+        //             if (err) {throw err};
+        //             console.log(`==========token=======${JSON.stringify(token)}`)
+        //             res.json({ token });
+        //             console.log(`==========직전 user=======${JSON.stringify(user)}`)
+        //         }
+        //         );
+        //         console.log(`========jwtSecret=========${JSON.stringify(config.jwtSecret)}`)
+        //     console.log(`=======verify==========${JSON.stringify(jwt.verify)}`)
+        // }
     }
     catch (err) {
         next(err);
     }
-    console.log(res.json({ token: jsonwebtoken_2.default }));
 });
 exports.default = {
     join,
     login,
-    exist
+    exist,
+    modify
 };

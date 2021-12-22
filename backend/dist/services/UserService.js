@@ -8,6 +8,10 @@ const createUser = (data) => {
     const user = new User_1.default(data);
     return user.save();
 };
+const modifyUser = (data) => {
+    const { email, username, password, address, birth, job, phone, user_interests } = data;
+    return User_1.default.findByIdAndUpdate(email, { username, password, address, birth, job, phone, user_interests });
+};
 const findLogin = (data) => {
     const { email, password } = data;
     return User_1.default.findOne({ email, password });
@@ -22,4 +26,5 @@ exports.default = {
     createUser,
     findLogin,
     findEmail,
+    modifyUser
 };

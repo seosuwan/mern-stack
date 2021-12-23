@@ -10,7 +10,8 @@ const createUser = (data) => {
 };
 const modifyUser = (data) => {
     const { email, username, password, address, birth, job, phone, user_interests } = data;
-    return User_1.default.findByIdAndUpdate(email, { username, password, address, birth, job, phone, user_interests });
+    console.log(`data :: ${email}`);
+    return User_1.default.updateOne({ email: email }, { username, password, address, birth, job, phone, user_interests });
 };
 const findLogin = (data) => {
     const { email, password } = data;

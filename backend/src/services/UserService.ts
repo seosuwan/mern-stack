@@ -7,7 +7,8 @@ const createUser = (data: IUserInPutDTO) => {
 }
 const modifyUser = (data: IUserInPutDTO ) => {
     const { email, username, password, address, birth, job, phone, user_interests } = data
-    return User.findOneAndUpdate({email,username, password, address, birth, job, phone, user_interests})
+    console.log(`data :: ${email}`)
+    return User.updateOne({email: email}, { username, password, address, birth, job, phone, user_interests})
 }
 const findLogin = (data: userUniqueSearchInput) => {
     const { email,password  } = data;

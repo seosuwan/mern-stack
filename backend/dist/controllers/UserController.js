@@ -163,19 +163,11 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
             return (0, errorGenerator_1.default)({ statusCode: 401 });
         }
         const payload = { usertoken: { email: user.email } };
-        const myToken = jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: 36000 }, (err, token) => {
-            if (err) {
-                throw err;
-            }
-            ;
-            console.log(`==========token=======${JSON.stringify(token)}`);
-            // return res.json({ token });
-            // console.log(`==========직전 user=======${JSON.stringify(user)}`)
-            // return res.status(201).json(user)
-            return JSON.stringify(token);
-        });
+        console.log(`payload: ${JSON.stringify(payload)}`);
+        const myToken = jsonwebtoken_1.default.sign(payload, config_1.default.jwtSecret, { expiresIn: '7s' });
         // const myToken = "test토큰"
         console.log(`------myToken :: ${myToken}`);
+        // return res.status(201).json({userData : user, tokenData: myToken})
         return res.status(201).json({ userData: user, tokenData: myToken });
         // else {
         // console.log(`=========email========${user.email}`)
@@ -202,6 +194,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         // // }
     }
     catch (err) {
+        console.log(`ERROR: ${err}`);
         next(err);
     }
 });

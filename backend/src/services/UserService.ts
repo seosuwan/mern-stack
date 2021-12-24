@@ -14,6 +14,10 @@ const findLogin = (data: userUniqueSearchInput) => {
     const { email,password  } = data;
     return User.findOne({ email, password });
 }
+const removeUser = (data: userExist) => {
+    const { email } = data;
+    return User.deleteOne({email})
+}
 const findEmail = (data: userExist) => {
     const { email } = data;
     // console.log(`여기는 파인드 이메일}`)
@@ -24,5 +28,6 @@ export default {
     createUser,
     findLogin,
     findEmail,
-    modifyUser
+    modifyUser,
+    removeUser
 };

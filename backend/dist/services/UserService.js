@@ -10,22 +10,24 @@ const createUser = (data) => {
 };
 const modifyUser = (data) => {
     const { email, username, password, address, birth, job, phone, user_interests } = data;
-    console.log(`data :: ${email}`);
     return User_1.default.updateOne({ email: email }, { username, password, address, birth, job, phone, user_interests });
 };
 const findLogin = (data) => {
     const { email, password } = data;
     return User_1.default.findOne({ email, password });
 };
+const removeUser = (data) => {
+    const { email } = data;
+    return User_1.default.deleteOne({ email });
+};
 const findEmail = (data) => {
     const { email } = data;
-    // console.log(`여기는 파인드 이메일}`)
-    // console.log(User.findOne({email}))
     return User_1.default.findOne({ email });
 };
 exports.default = {
     createUser,
     findLogin,
     findEmail,
-    modifyUser
+    modifyUser,
+    removeUser
 };

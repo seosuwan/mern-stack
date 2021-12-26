@@ -7,7 +7,6 @@ const createUser = (data: IUserInPutDTO) => {
 }
 const modifyUser = (data: IUserInPutDTO ) => {
     const { email, username, password, address, birth, job, phone, user_interests } = data
-    console.log(`data :: ${email}`)
     return User.updateOne({email: email}, { username, password, address, birth, job, phone, user_interests})
 }
 const findLogin = (data: userUniqueSearchInput) => {
@@ -20,8 +19,6 @@ const removeUser = (data: userExist) => {
 }
 const findEmail = (data: userExist) => {
     const { email } = data;
-    // console.log(`여기는 파인드 이메일}`)
-    // console.log(User.findOne({email}))
     return User.findOne({ email });
 }
 export default {
